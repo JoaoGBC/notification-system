@@ -1,0 +1,52 @@
+[tool.poetry]
+name = "notification-system"
+version = "0.1.0"
+description = ""
+authors = ["Joao Gabriel <joao.gabriel156@hotmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+faststream = {extras = ["cli", "rabbit"], version = "^0.5.48"}
+fastapi = {extras = ["standard"], version = "^0.116.1"}
+pydantic-settings = "^2.10.1"
+sqlalchemy = {extras = ["asyncio"], version = "^2.0.43"}
+alembic = "^1.16.4"
+
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.12.9"
+taskipy = "^1.14.1"
+pytest-asyncio = "^1.1.0"
+pytest-cov = "^6.2.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.ruff]
+line-length = 79
+extend-exclude = ['migrations']
+
+[tool.ruff.lint]
+preview = true
+select = ['I', 'F', 'E', 'W', 'PL', 'PT']
+
+[tool.ruff.format]
+quote-style = 'single'
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+
+[tool.coverage.run]
+concurrency = ['greenlet']
+
+
+[tool.taskipy.tasks]
+lint = 'ruff check . ; ruff check . --diff'
+format = 'ruff check . --fix && ruff format .'
+templates = 'fastapi dev notification_system/templates_api/app.py'
+pre_test = 'task lint'
+test = 'pytest -s -x --cov=notification_system -vv'
+post_test = 'coverage html'
