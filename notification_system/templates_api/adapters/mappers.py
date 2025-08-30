@@ -1,0 +1,75 @@
+from ..models.template_model import TemplateDb as TemplateDB
+from ..schemas.templates_schemas import (
+    RegisterTemplate,
+    SMSTemplate,
+    EmailTemplate,
+    GenericTemplate,
+    Template,
+    Channel,
+    TemplateType
+)
+
+def map_dto_to_orm(*, template_dto: RegisterTemplate) -> TemplateDB:
+    data = {
+        "template_name": template_dto.template_name,
+        "channel": template_dto.channel_type,
+        "version": template_dto.version,
+        "tenant_id": template_dto.tenant_id
+    }
+
+    # Desmonta o submodelo `template` nos campos planos
+    template_content = template_dto.template
+    if isinstance(template_content, EmailTemplate):
+        data['html_content'] = template_content.content
+        data['subject'] = template_content.subject
+    elif isinstance(template_content, SMSTemplate):
+        data['sms_content'] = template_content.content
+    elif isinstance(template_content, GenericTemplate):
+        data['generic_title_content'] = template_content.title
+        data['generic_content'] = template_content.content
+
+    template_orm = TemplateDB(**data)
+    return template_orm
+
+
+def map_orm_to_dto(*, template_orm: TemplateDB) -> Template:
+    """
+    Cria uma instância do Pydantic Template a partir do modelo 
+    plano do SQLAlchemy.
+    """
+    template_data: TemplateType
+
+    # Usa um match-case para determinar qual submodelo Pydantic criar
+    match template_orm.channel:
+        case Channel.EMAIL:
+            template_data = EmailTemplate(
+                content=template_orm.html_content or "", # Garante que não seja None
+                subject=template_orm.subject or "",
+                version=template_orm.version
+            )
+        case Channel.SMS:
+            template_data = SMSTemplate(
+                content=template_orm.sms_content or "",
+                version=template_orm.version
+            )
+        case Channel.MOBILE_PUSH | Channel.WEB_PUSH | Channel.WEB_SOCKET:
+            template_data = GenericTemplate(
+                title=template_orm.generic_title_content,
+                content=template_orm.generic_content or "",
+                version=template_orm.version
+            )
+        case _:
+            # Lança um erro se um canal inesperado for encontrado
+            raise ValueError(f"Canal não suportado para mapeamento: {template_orm.channel}")
+
+    # Monta o objeto RegisterTemplate final
+    return Template(
+        id=template_orm.id,
+        template_name=template_orm.template_name,
+        channel_type=template_orm.channel,
+        template=template_data,
+        tenant_id=template_orm.tenant_id,
+        version=template_orm.version,
+        create_at=template_orm.created_at,
+        updated_at=template_orm.updated_at
+    )

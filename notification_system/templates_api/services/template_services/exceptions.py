@@ -1,0 +1,9 @@
+class TemplateServiceBaseException(Exception):
+    ...
+
+
+class TemplateNotFound(TemplateServiceBaseException):
+    ...
+
+class InvalidDbRecord(TemplateServiceBaseException):
+    ...

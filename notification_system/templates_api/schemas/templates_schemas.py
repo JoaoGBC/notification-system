@@ -45,3 +45,13 @@ class RegisterTemplate(BaseModel):
 class Template(RegisterTemplate):
     create_at: datetime
     updated_at: datetime | None = None
+
+
+class TemplateSumary(BaseModel):
+    id: UUID
+    template_name: str
+    channel: Channel
+
+
+class TemplateSumaryList(BaseModel):
+    templates: list[TemplateSumary]
