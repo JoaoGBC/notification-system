@@ -1,0 +1,98 @@
+{
+  "asyncapi": "2.6.0",
+  "defaultContentType": "application/json",
+  "info": {
+    "title": "FastStream",
+    "version": "0.1.0",
+    "description": ""
+  },
+  "servers": {
+    "development": {
+      "url": "amqp://guest:guest@localhost:5672/",
+      "protocol": "amqp",
+      "protocolVersion": "0.9.1"
+    }
+  },
+  "channels": {
+    "in-queue:_:HandleMsg": {
+      "servers": [
+        "development"
+      ],
+      "bindings": {
+        "amqp": {
+          "is": "routingKey",
+          "bindingVersion": "0.2.0",
+          "queue": {
+            "name": "in-queue",
+            "durable": false,
+            "exclusive": false,
+            "autoDelete": false,
+            "vhost": "/"
+          },
+          "exchange": {
+            "type": "default",
+            "vhost": "/"
+          }
+        }
+      },
+      "subscribe": {
+        "bindings": {
+          "amqp": {
+            "cc": "in-queue",
+            "ack": true,
+            "bindingVersion": "0.2.0"
+          }
+        },
+        "message": {
+          "$ref": "#/components/messages/in-queue:_:HandleMsg:Message"
+        }
+      }
+    }
+  },
+  "components": {
+    "messages": {
+      "in-queue:_:HandleMsg:Message": {
+        "title": "in-queue:_:HandleMsg:Message",
+        "correlationId": {
+          "location": "$message.header#/correlation_id"
+        },
+        "payload": {
+          "$ref": "#/components/schemas/SingleEmailNotification"
+        }
+      }
+    },
+    "schemas": {
+      "SingleEmailNotification": {
+        "properties": {
+          "subject": {
+            "title": "Subject",
+            "type": "string"
+          },
+          "recipient": {
+            "format": "email",
+            "title": "Recipient",
+            "type": "string"
+          },
+          "template_id": {
+            "format": "uuid",
+            "title": "Template Id",
+            "type": "string"
+          },
+          "keys": {
+            "additionalProperties": true,
+            "title": "Keys",
+            "type": "object"
+          }
+        },
+        "required": [
+          "subject",
+          "recipient",
+          "template_id",
+          "keys"
+        ],
+        "title": "SingleEmailNotification",
+        "type": "object"
+      }
+    }
+  }
+}
