@@ -14,6 +14,7 @@ sqlalchemy = {extras = ["asyncio"], version = "^2.0.43"}
 alembic = "^1.16.4"
 asyncpg = "^0.30.0"
 psycopg2-binary = "^2.9.10"
+httpx = "^0.28.1"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -49,6 +50,8 @@ concurrency = ['greenlet']
 lint = 'ruff check . ; ruff check . --diff'
 format = 'ruff check . --fix && ruff format .'
 templates = 'fastapi dev notification_system/templates_api/app.py'
+notification_workers = 'faststream run notification_system.notification_workers.app:app --reload'
+notification_workers_docs = 'faststream docs gen notification_system.notification_workers.app:app ; faststream docs serve asyncapi.json --port 8001'
 pre_test = 'task lint'
 test = 'pytest -s -x --cov=notification_system -vv'
 post_test = 'coverage html'
