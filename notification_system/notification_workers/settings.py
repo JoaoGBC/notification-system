@@ -7,6 +7,6 @@ class Settings(BaseSettings):
         env_file='.env', env_file_encoding='utf-8', extra='ignore'
     )
     DATABASE_URL: str = Field(alias='SQLALCHEMY_DATABASE_URI_NOTIFICATION_WORKERS')
-
+    BROKER_URL: str = Field(alias='NOTIFICATION_WORKER_BROKER_URL')
 
 settings = Settings()
