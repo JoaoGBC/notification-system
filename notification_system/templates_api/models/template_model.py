@@ -1,7 +1,6 @@
 from datetime import datetime
 from enum import Enum
 from uuid import UUID
-
 from sqlalchemy import TEXT, func, text
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -17,7 +16,7 @@ class Channel(str, Enum):
 
 
 @table_registry.mapped_as_dataclass
-class Template:
+class TemplateDb:
     __tablename__ = 'templates'
     id: Mapped[UUID] = mapped_column(
         init=False,
@@ -26,13 +25,11 @@ class Template:
         server_default=text("uuid_generate_v4()")
     )
     template_name: Mapped[str]
-    channel: Mapped[Channel] = mapped_column(indext=True)
-    html_content: Mapped[str | None] = mapped_column(TEXT, nullable=True)
-    subject: Mapped[str | None] = mapped_column(str, nullable=True)
-    sms_content: Mapped[str | None] = mapped_column(nullable=True)
-    generic_title_content: Mapped[str | None] = mapped_column(nullable=True)
-    generic_content: Mapped[str | None] = mapped_column(nullable=True)
+    channel: Mapped[Channel] = mapped_column(index=True)
+    
+    
     version: Mapped[str]
+    tenant_id: Mapped[UUID] = mapped_column(nullable=False, unique=False)
     created_at: Mapped[datetime] = mapped_column(
         init=False,
         server_default=func.now()
@@ -42,3 +39,9 @@ class Template:
         nullable=True,
         server_onupdate=func.now()
     )
+
+    html_content: Mapped[str | None] = mapped_column(TEXT, nullable=True, default=None)
+    subject: Mapped[str | None] = mapped_column(nullable=True, default=None)
+    sms_content: Mapped[str | None] = mapped_column(nullable=True, default=None)
+    generic_title_content: Mapped[str | None] = mapped_column(nullable=True, default=None)
+    generic_content: Mapped[str | None] = mapped_column(nullable=True, default=None)

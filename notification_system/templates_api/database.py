@@ -1,4 +1,4 @@
-from typing import AsyncGenerator
+from typing import AsyncIterator
 
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
@@ -10,6 +10,6 @@ from .settings import settings
 async_engine = create_async_engine(settings.API_DATABASE_URL)
 
 
-async def get_async_session() -> AsyncGenerator[AsyncSession, None, None]:
+async def get_async_session() -> AsyncIterator[AsyncSession]:
     async with AsyncSession(async_engine, expire_on_commit=False) as session:
         yield session
