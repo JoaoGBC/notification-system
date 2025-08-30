@@ -1,6 +1,7 @@
 services:
   postgres_db:
     image: postgres
+    container_name: postgres
     volumes:
       - pgdata:/var/lib/postgresql/data
     environment:
@@ -9,6 +10,28 @@ services:
       POSTGRES_PASSWORD: app_password
     ports:
       - "5432:5432"
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"   # Porta do AMQP para as aplicações
+      - "15672:15672" # Interface de gerenciamento web
+    environment:
+      RABBITMQ_DEFAULT_USER: guest # Usuário padrão para desenvolvimento
+      RABBITMQ_DEFAULT_PASS: guest # Senha padrão para desenvolvimento
+
+  timescaledb:
+    image: timescale/timescaledb:latest-pg16
+    container_name: timescaledb
+    volumes:
+      - timescaledata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: app_user
+      POSTGRES_PASSWORD: app_password
+      POSTGRES_DB: history_db
+    ports:
+      - "5433:5432"
 
   mailpit:
         image: axllent/mailpit
@@ -33,7 +56,7 @@ services:
       KEYCLOAK_ADMIN_PASSWORD: admin
 
       KC_DB: postgres
-      KY_DB_URL_HOST: postgres_db
+      KC_DB_URL_HOST: postgres_db
       KC_DB_URL_DATABASE: app_db
       KC_DB_USERNAME: app_user
       KC_DB_PASSWORD: app_password
@@ -45,3 +68,4 @@ services:
 volumes:
   pgdata:
   mailpitdata:
+  timescaledata:

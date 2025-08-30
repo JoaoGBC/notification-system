@@ -31,14 +31,25 @@ if config.config_file_name is not None:
 
 target_metadata = {}
 
-from notification_system.templates_api.db_registry import metadata
+from notification_system.templates_api.db_registry import metadata as template_api_metadata
 import notification_system.templates_api.models
-target_metadata['template_api_db'] = metadata
+target_metadata['template_api_db'] = template_api_metadata
+
+
+
+from notification_system.notification_workers.db_registry import metadata as notification_workers_metadata
+import notification_system.notification_workers.models
+target_metadata["notification_workers"] = notification_workers_metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
+
+def include_object(object, name, type_, reflected, compare_to):
+    if type_ == 'table' and object.schema and object.schema.startswith("_timescaledb"):
+        return False
+    return True
 
 
 def run_migrations_offline() -> None:
@@ -58,6 +69,7 @@ def run_migrations_offline() -> None:
         url=url,
         target_metadata=target_metadata.get(db_name),
         literal_binds=True,
+        include_object=include_object,
         dialect_opts={"paramstyle": "named"},
         include_schemas=True,
     )
@@ -73,6 +85,7 @@ def do_run_migrations(connection):
         connection=connection,
         target_metadata=target_metadata.get(db_name),
         include_schemas=True,
+        include_object=include_object,
         version_table_schema = target_metadata.get(db_name).schema
     )
     connection.execute(sa.text(f'CREATE SCHEMA IF NOT EXISTS "{target_metadata.get(db_name).schema}"'))
