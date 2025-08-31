@@ -1,7 +1,7 @@
 from datetime import datetime
 from enum import Enum
 from uuid import UUID
-from sqlalchemy import TEXT, func, text
+from sqlalchemy import JSON, TEXT, func, text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from ..db_registry import table_registry
@@ -45,3 +45,5 @@ class TemplateDb:
     sms_content: Mapped[str | None] = mapped_column(nullable=True, default=None)
     generic_title_content: Mapped[str | None] = mapped_column(nullable=True, default=None)
     generic_content: Mapped[str | None] = mapped_column(nullable=True, default=None)
+    context_keys_content: Mapped[list[str]] = mapped_column(JSON, nullable=True, default=None)
+    context_keys_subject: Mapped[list[str]] = mapped_column(JSON, nullable=True, default=None)

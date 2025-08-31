@@ -1,3 +1,4 @@
+from notification_system.templates_api.schemas.jinja2_types import Jinja2Template
 from ..models.template_model import TemplateDb as TemplateDB
 from ..schemas.templates_schemas import (
     RegisterTemplate,
@@ -16,12 +17,21 @@ def map_dto_to_orm(*, template_dto: RegisterTemplate) -> TemplateDB:
         "version": template_dto.version,
         "tenant_id": template_dto.tenant_id
     }
+    context_keys_content = None
+    context_keys_subject = None
+    if isinstance(template_dto.template, EmailTemplate):
+        if isinstance(template_dto.template.content, Jinja2Template):
+            context_keys_content = list(template_dto.template.content.get_context_keys())
+        if isinstance(template_dto.template.subject, Jinja2Template):
+            context_keys_subject = list(template_dto.template.subject.get_context_keys())
 
-    # Desmonta o submodelo `template` nos campos planos
+    data['context_keys_content'] = context_keys_content
+    data['context_keys_subject'] = context_keys_subject
     template_content = template_dto.template
     if isinstance(template_content, EmailTemplate):
         data['html_content'] = template_content.content
         data['subject'] = template_content.subject
+  
     elif isinstance(template_content, SMSTemplate):
         data['sms_content'] = template_content.content
     elif isinstance(template_content, GenericTemplate):
@@ -71,5 +81,7 @@ def map_orm_to_dto(*, template_orm: TemplateDB) -> Template:
         tenant_id=template_orm.tenant_id,
         version=template_orm.version,
         create_at=template_orm.created_at,
-        updated_at=template_orm.updated_at
+        updated_at=template_orm.updated_at,
+        context_keys_content=template_orm.context_keys_content,
+        context_keys_subject=template_orm.context_keys_subject
     )

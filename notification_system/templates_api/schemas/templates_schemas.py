@@ -1,8 +1,11 @@
 from datetime import datetime
 from enum import Enum
+from typing import Self
 from uuid import UUID
 
-from pydantic import BaseModel
+from pydantic import BaseModel, model_validator
+
+from .jinja2_types import Jinja2Template
 
 
 class Channel(str, Enum):
@@ -14,19 +17,19 @@ class Channel(str, Enum):
 
 
 class EmailTemplate(BaseModel):
-    content: str
-    subject: str
+    content: Jinja2Template
+    subject: Jinja2Template 
     version: str
 
 
 class SMSTemplate(BaseModel):
-    content: str
+    content: Jinja2Template
     version: str
 
 
 class GenericTemplate(BaseModel):
-    title: str | None = None
-    content: str
+    title: Jinja2Template | None = None
+    content: Jinja2Template 
     version: str
 
 
@@ -41,8 +44,25 @@ class RegisterTemplate(BaseModel):
     tenant_id: UUID
     version: str
 
+    @model_validator(mode='after')
+    def check_channel_and_template_model(self) -> Self:
+        if (
+                self.channel_type == Channel.EMAIL
+                and
+                isinstance(self.template, EmailTemplate)
+            ):
+            return self
+        if (
+            self.channel_type == Channel.SMS
+            and
+            isinstance(self.template, SMSTemplate)
+            ):
+            return self
+        raise ValueError("Channel and TemplateType must be compatible")
 
 class Template(RegisterTemplate):
+    context_keys_content: list[str] | None
+    context_keys_subject: list[str] | None
     create_at: datetime
     updated_at: datetime | None = None
 
