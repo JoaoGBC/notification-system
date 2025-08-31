@@ -2,6 +2,9 @@ class TemplateServiceBaseException(Exception):
     ...
 
 
+class TemplateIntegrityError(TemplateServiceBaseException):
+    ...
+
 class TemplateNotFound(TemplateServiceBaseException):
     ...
 

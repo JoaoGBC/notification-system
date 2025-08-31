@@ -4,7 +4,7 @@ from uuid import UUID
 
 from notification_system.templates_api.schemas.templates_schemas import RegisterTemplate, Template
 from notification_system.templates_api.models.template_model import Channel, TemplateDb
-from .exceptions import InvalidDbRecord, TemplateNotFound
+from .exceptions import InvalidDbRecord, TemplateIntegrityError, TemplateNotFound
 from ...adapters.mappers import map_dto_to_orm, map_orm_to_dto
 
 
@@ -19,17 +19,17 @@ async def register_template(
     check rules and persists a template on DB
     returns true e the template has been sucessfuly saved
     """
-    #checks if template exists
     template_db = await session.scalar(
         select(
             TemplateDb
         ).filter(
-            TemplateDb.template_name == template.template_name
+            TemplateDb.template_name == template.template_name,
+            TemplateDb.tenant_id == template.tenant_id
         )
     )
 
     if template_db:
-        return False
+        raise TemplateIntegrityError
     
     try:
         template_db = map_dto_to_orm(template_dto=template)
