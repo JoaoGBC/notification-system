@@ -3,12 +3,8 @@
 
 from uuid import UUID
 import httpx
-from pydantic import BaseModel
 
-
-class EmailTemplate(BaseModel):
-    template_body: str
-    subject: str
+from ..schemas.email_template_schemas import EmailTemplate
 
 
 async def get_template(template_id: UUID) -> EmailTemplate:
@@ -23,7 +19,9 @@ async def get_template(template_id: UUID) -> EmailTemplate:
             response = response.json()
             return EmailTemplate(
                     template_body= response['template']['content'],
-                    subject= response['template']['subject']
+                    subject= response['template']['subject'],
+                    body_context_keys= response['context_keys_content'],
+                    subject_context_keys= response['context_keys_subject']
                 )
     except httpx.HTTPStatusError as e:
         #Tratar os erros/status previstos na api de templates aqui
