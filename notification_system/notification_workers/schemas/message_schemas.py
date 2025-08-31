@@ -1,6 +1,8 @@
-from pydantic import BaseModel, EmailStr
-from uuid import UUID
 from typing import Any
+from uuid import UUID
+
+from pydantic import BaseModel, EmailStr
+
 
 class SingleEmailNotification(BaseModel):
     subject: str

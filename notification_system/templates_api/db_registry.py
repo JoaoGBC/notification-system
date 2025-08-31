@@ -10,7 +10,9 @@ convention = {
 }
 
 
-metadata = MetaData(naming_convention=convention, schema='templates_api_schema')
+metadata = MetaData(
+    naming_convention=convention, schema='templates_api_schema'
+)
 
 
 table_registry = registry(metadata=metadata)

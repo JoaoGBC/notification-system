@@ -1,1 +1,1 @@
-from .email_history_model import EmailHistory #noqa
+from .email_history_model import EmailHistory  # noqa

@@ -18,7 +18,7 @@ class Channel(str, Enum):
 
 class EmailTemplate(BaseModel):
     content: Jinja2Template
-    subject: Jinja2Template 
+    subject: Jinja2Template
     version: str
 
 
@@ -29,7 +29,7 @@ class SMSTemplate(BaseModel):
 
 class GenericTemplate(BaseModel):
     title: Jinja2Template | None = None
-    content: Jinja2Template 
+    content: Jinja2Template
     version: str
 
 
@@ -46,19 +46,16 @@ class RegisterTemplate(BaseModel):
 
     @model_validator(mode='after')
     def check_channel_and_template_model(self) -> Self:
-        if (
-                self.channel_type == Channel.EMAIL
-                and
-                isinstance(self.template, EmailTemplate)
-            ):
+        if self.channel_type == Channel.EMAIL and isinstance(
+            self.template, EmailTemplate
+        ):
             return self
-        if (
-            self.channel_type == Channel.SMS
-            and
-            isinstance(self.template, SMSTemplate)
-            ):
+        if self.channel_type == Channel.SMS and isinstance(
+            self.template, SMSTemplate
+        ):
             return self
-        raise ValueError("Channel and TemplateType must be compatible")
+        raise ValueError('Channel and TemplateType must be compatible')
+
 
 class Template(RegisterTemplate):
     context_keys_content: list[str] | None

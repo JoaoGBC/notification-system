@@ -1,1 +1,1 @@
-from .template_model import TemplateDb #noqa
+from .template_model import TemplateDb  # noqa
