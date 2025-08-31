@@ -30,6 +30,7 @@ async def create_template(
     template: RegisterTemplate,
     session: T_session
 ):
+
     resp = await register_template(
         template=template,
         session=session
@@ -40,7 +41,7 @@ async def create_template(
 @templates_router.get(
     '/', 
     response_model = Template,
-    status_code= HTTPStatus.CREATED
+    status_code= HTTPStatus.OK
 )
 async def get_template_by_uuid(
     template_id: UUID,
