@@ -5,7 +5,9 @@ from uuid import UUID
 
 from pydantic import BaseModel, model_validator
 
-from .jinja2_types import Jinja2Template
+from notification_system.common_utils.types.jinja2_pydantic_schema import (
+    Jinja2Template
+)
 
 
 class Channel(str, Enum):
