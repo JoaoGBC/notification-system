@@ -48,10 +48,13 @@ async def register_template(
 
 
 async def get_template(
-    *, template_id: UUID, session: AsyncSession
+    *, template_id: UUID, tenant_id: UUID,session: AsyncSession
 ) -> Template:
     template_db = await session.scalar(
-        select(TemplateDb).where(TemplateDb.id == template_id)
+        select(TemplateDb).where(
+            TemplateDb.id == template_id,
+            TemplateDb.tenant_id == tenant_id,
+        )
     )
 
     if not template_db:
