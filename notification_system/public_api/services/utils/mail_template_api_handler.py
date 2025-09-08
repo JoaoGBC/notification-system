@@ -3,7 +3,7 @@ import httpx
 from httpx_auth import OAuth2ClientCredentials
 
 from ...settings import settings
-
+from .template_schema import TemplateInfoSchema
 
 
 credentials = OAuth2ClientCredentials(
@@ -23,11 +23,18 @@ template_api_client = httpx.AsyncClient(
 
 
 
+
+def __get_template_api_response_mapper(
+        api_response: dict
+    ) -> TemplateInfoSchema: 
+    ...
+
+
 async def get_template(
         *,
         template_id: UUID,
         tenant_id: UUID
-    ):
+    ) -> TemplateInfoSchema:
     try:
         template = (await template_api_client.get(
             url='/templates/',

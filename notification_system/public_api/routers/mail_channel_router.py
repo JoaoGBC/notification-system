@@ -36,6 +36,7 @@ async def send_mail_view(user: T_send_role, send_mail_request: SendSingleMail):
             status_code= HTTPStatus.NOT_FOUND,
             detail='Template not found',
         )
+    
     ...
 
 
