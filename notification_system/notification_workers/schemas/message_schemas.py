@@ -5,7 +5,7 @@ from pydantic import BaseModel, EmailStr
 
 
 class SingleEmailNotification(BaseModel):
-    subject: str
     recipient: EmailStr
     template_id: UUID
-    keys: dict[str, Any]
+    body_keys: dict[str, Any]
+    subject_keys: dict[str, Any]
