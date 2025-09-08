@@ -1,7 +1,6 @@
-from notification_system.templates_api.schemas.jinja2_types import (
-    Jinja2Template,
+from notification_system.common_utils.types.jinja2_pydantic_schema import (
+    Jinja2Template
 )
-
 from ..models.template_model import TemplateDb as TemplateDB
 from ..schemas.templates_schemas import (
     Channel,
