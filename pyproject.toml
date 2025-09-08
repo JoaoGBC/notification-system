@@ -13,8 +13,11 @@ pydantic-settings = "^2.10.1"
 sqlalchemy = {extras = ["asyncio"], version = "^2.0.43"}
 alembic = "^1.16.4"
 asyncpg = "^0.30.0"
-psycopg2-binary = "^2.9.10"
 httpx = "^0.28.1"
+aiosmtplib = "^4.0.2"
+pyjwt = "^2.10.1"
+cryptography = "^45.0.7"
+httpx-auth = "^0.23.1"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -49,9 +52,12 @@ concurrency = ['greenlet']
 [tool.taskipy.tasks]
 lint = 'ruff check . ; ruff check . --diff'
 format = 'ruff check . --fix && ruff format .'
-templates = 'fastapi dev notification_system/templates_api/app.py'
+templates = 'uvicorn notification_system.templates_api.app:app --port 8000 --reload --reload-dir notification_system/templates_api/ --reload-dir notification_system/common_utils'
+public = 'uvicorn notification_system.public_api.app:app --port 8002 --reload --reload-dir notification_system/public_api/ --reload-dir notification_system/common_utils'
 notification_workers = 'faststream run notification_system.notification_workers.app:app --reload'
 notification_workers_docs = 'faststream docs gen notification_system.notification_workers.app:app ; faststream docs serve asyncapi.json --port 8001'
 pre_test = 'task lint'
 test = 'pytest -s -x --cov=notification_system -vv'
 post_test = 'coverage html'
+
+
