@@ -12,19 +12,27 @@ from ..schemas.templates_schemas import (
     TemplateSumaryList,
 )
 from ..services import (
-    InvalidDbRecord,
-    TemplateNotFound,
     delete_templates,
     get_template,
     list_templates_by_tenant,
     register_template,
 )
 
+from ..services.template_services.exceptions import (
+    InvalidDbRecord,
+    TemplateNotFound,
+)
+
+
 templates_router = APIRouter(prefix='/templates', tags=['templates'])
 
 T_session = Annotated[AsyncSession, Depends(get_async_session)]
 
 
+##TODO: adicionar a funcionalidade de herança de templates
+## ideia por tras da implementação no obsidiam do projeto, 
+## na anotação (obsidiam vault)
+## >notification_system>melhorias>2. Herança...
 @templates_router.post(
     '/', response_model=Template, status_code=HTTPStatus.CREATED
 )
@@ -34,9 +42,16 @@ async def create_template(template: RegisterTemplate, session: T_session):
 
 
 @templates_router.get('/', response_model=Template, status_code=HTTPStatus.OK)
-async def get_template_by_uuid(template_id: UUID, session: T_session):
+async def get_template_by_uuid(
+    template_id: UUID,
+    tenant_id: UUID,
+    session: T_session
+    ):
     try:
-        resp = await get_template(template_id=template_id, session=session)
+        resp = await get_template(
+            template_id=template_id,
+            tenant_id=tenant_id,
+            session=session)
     except TemplateNotFound:
         raise HTTPException(
             detail='Template not found', status_code=HTTPStatus.NOT_FOUND
