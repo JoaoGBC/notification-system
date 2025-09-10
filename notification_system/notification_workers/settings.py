@@ -9,7 +9,7 @@ class Settings(BaseSettings):
     DATABASE_URL: str = Field(
         alias='SQLALCHEMY_DATABASE_URI_NOTIFICATION_WORKERS'
     )
-    BROKER_URL: str = Field(alias='NOTIFICATION_WORKER_BROKER_URL')
+    BROKER_URL: str = Field(alias='BROKER_URL')
 
 
 settings = Settings()
