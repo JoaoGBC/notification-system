@@ -21,6 +21,7 @@ class Settings(BaseSettings):
     KEYCLOAK_REALM: str = Field(
         alias = 'KEYCLOAK_REALM'
     )
+    BROKER_URL: str = Field(alias='BROKER_URL')
 
 
 settings = Settings()
