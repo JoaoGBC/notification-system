@@ -41,7 +41,7 @@ async def create_template(template: RegisterTemplate, session: T_session):
     return resp
 
 
-@templates_router.get('/', response_model=Template, status_code=HTTPStatus.OK)
+@templates_router.get('/{tenant_id}/{template_id}', response_model=Template, status_code=HTTPStatus.OK)
 async def get_template_by_uuid(
     template_id: UUID,
     tenant_id: UUID,
@@ -65,7 +65,7 @@ async def get_template_by_uuid(
 
 
 @templates_router.get(
-    '/list',
+    '/{tenant_id}',
     response_model=TemplateSumaryList | list[None],
     status_code=HTTPStatus.OK,
 )
