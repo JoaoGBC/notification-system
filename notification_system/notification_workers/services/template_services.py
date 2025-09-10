@@ -5,7 +5,7 @@ import httpx
 from ..schemas.email_template_schemas import EmailTemplate
 
 
-async def get_template(template_id: UUID) -> EmailTemplate:
+async def get_template(template_id: UUID, tenant_id: UUID) -> EmailTemplate:
     try:
         async with httpx.AsyncClient() as client:
             response = (
@@ -13,6 +13,7 @@ async def get_template(template_id: UUID) -> EmailTemplate:
                     url='http://localhost:8000/templates/',
                     params={
                         'template_id': template_id,
+                        'tenant_id': tenant_id,
                     },
                 )
             ).raise_for_status()

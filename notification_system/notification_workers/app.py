@@ -12,7 +12,10 @@ app = FastStream(broker=broker)
 
 @broker.subscriber('in-queue')
 async def handle_msg(message: SingleEmailNotification) -> None:
-    template = await get_template(message.template_id)
+    template = await get_template(
+        message.template_id,
+        tenant_id=message.tenant_id
+    )
     renderized_template = template.render_body(message.body_keys)
     renderized_subject = template.render_subject(message.subject_keys)
     await send_mail_single(
