@@ -39,7 +39,6 @@ TemplateType = EmailTemplate | SMSTemplate | GenericTemplate
 
 
 class RegisterTemplate(BaseModel):
-    id: UUID
     template_name: str
     channel_type: Channel
     template: TemplateType
@@ -60,6 +59,7 @@ class RegisterTemplate(BaseModel):
 
 
 class Template(RegisterTemplate):
+    id: UUID
     context_keys_content: list[str] | None
     context_keys_subject: list[str] | None
     create_at: datetime

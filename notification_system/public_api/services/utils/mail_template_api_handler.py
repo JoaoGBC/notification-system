@@ -3,8 +3,7 @@ import httpx
 from httpx_auth import OAuth2ClientCredentials
 
 from ...settings import settings
-from .template_schema import TemplateInfoSchema, TemplateSumary
-
+from ...schemas.mail_channel import TemplateInfoSchema, TemplateSumary, CreateEmailTemplate
 
 credentials = OAuth2ClientCredentials(
     token_url= f'{settings.KEYCLOAK_SERVER_URL}/realms/'
@@ -54,6 +53,14 @@ def __list_template_api_response_mapper(
         raise ValueError('Invalid response object from templates_api call')
 
 
+
+def __create_template_api_response_mapper(
+        api_response: dict
+    ) -> TemplateInfoSchema:
+        return __get_template_api_response_mapper(
+            api_response=api_response
+        )
+
 async def get_template(
         *,
         template_id: UUID,
@@ -66,7 +73,7 @@ async def get_template(
         return __get_template_api_response_mapper(template.json())
     except Exception as e:
         raise e
-    
+    ...
 
 async def list_templates(
         *,
@@ -82,5 +89,20 @@ async def list_templates(
             __list_template_api_response_mapper(template_item) 
             for template_item in template_list.json().get('templates')
         )
+    except Exception as e:
+        raise e
+    
+
+
+async def create_template(
+        *,
+        template: CreateEmailTemplate
+    ):
+    try:
+        api_response = (await template_api_client.post(
+            url='/templates/',
+            json=template.model_dump(mode='json')
+        )).raise_for_status()
+        return __create_template_api_response_mapper(api_response=api_response.json())
     except Exception as e:
         raise e

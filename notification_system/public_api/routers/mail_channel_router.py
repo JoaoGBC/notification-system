@@ -4,9 +4,11 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException
 
 from ..security import PublicFacingKeycloakToken, RoleChecker
-from ..services.mail_services import get_template, list_templates
-from ..schemas.mail_channel import SendSingleMail
+from ..services.utils.mail_template_api_handler import get_template, list_templates, create_template
+from ..schemas.mail_channel import PublicCreateEmailTemplate, CreateEmailTemplate, SendSingleMail, TemplateInfoSchema
 from ..broker import broker, SingleEmailNotification
+
+
 
 
 mail_channel_router = APIRouter(
@@ -25,6 +27,11 @@ T_get_template_role = Annotated[
     Depends(RoleChecker(required_roles=['notifications:read-template']))
 ]
 
+
+T_create_template_role = Annotated[
+    PublicFacingKeycloakToken,
+    Depends(RoleChecker(required_roles=['notifications:create-template']))
+]
 
 @mail_channel_router.post('/send')
 async def send_mail_view(user: T_send_role, send_mail_request: SendSingleMail):
@@ -76,3 +83,23 @@ async def list_template_view(user: T_get_template_role):
     return template
 
 
+
+
+@mail_channel_router.post(
+        '/',
+        response_model= TemplateInfoSchema,
+    )
+async def create_template_view(
+        user: T_get_template_role,
+        template: PublicCreateEmailTemplate,
+    ):
+        template = CreateEmailTemplate(
+            **template.model_dump(),
+            tenant_id= user['tenant_id']
+        )
+        
+        created_template = await create_template(
+            template=template
+        )
+
+        return created_template
