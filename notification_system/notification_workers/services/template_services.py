@@ -3,18 +3,19 @@ from uuid import UUID
 import httpx
 
 from ..schemas.email_template_schemas import EmailTemplate
+from ..settings import settings
 
 
-async def get_template(template_id: UUID, tenant_id: UUID) -> EmailTemplate:
+async def get_template(
+        *,
+        template_id: UUID,
+        tenant_id: UUID
+    ) -> EmailTemplate:
     try:
         async with httpx.AsyncClient() as client:
             response = (
                 await client.get(
-                    url='http://localhost:8000/templates/',
-                    params={
-                        'template_id': template_id,
-                        'tenant_id': tenant_id,
-                    },
+                    url=f'{settings.TEMPLATE_API_HOST}/{tenant_id}/{template_id}',
                 )
             ).raise_for_status()
             response = response.json()
