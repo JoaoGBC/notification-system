@@ -64,10 +64,6 @@
     "schemas": {
       "SingleEmailNotification": {
         "properties": {
-          "subject": {
-            "title": "Subject",
-            "type": "string"
-          },
           "recipient": {
             "format": "email",
             "title": "Recipient",
@@ -78,17 +74,28 @@
             "title": "Template Id",
             "type": "string"
           },
-          "keys": {
+          "tenant_id": {
+            "format": "uuid",
+            "title": "Tenant Id",
+            "type": "string"
+          },
+          "body_keys": {
             "additionalProperties": true,
-            "title": "Keys",
+            "title": "Body Keys",
+            "type": "object"
+          },
+          "subject_keys": {
+            "additionalProperties": true,
+            "title": "Subject Keys",
             "type": "object"
           }
         },
         "required": [
-          "subject",
           "recipient",
           "template_id",
-          "keys"
+          "tenant_id",
+          "body_keys",
+          "subject_keys"
         ],
         "title": "SingleEmailNotification",
         "type": "object"
