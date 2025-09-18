@@ -3,7 +3,7 @@ from faststream import Context, ContextRepo, FastStream
 from faststream.rabbit import RabbitBroker
 
 
-from .services.mail_services import EmailService
+from .services.email_sender_service import EmailService
 from .settings import settings
 
 from .routers.transactional_email_router import transational_email_router

@@ -2,7 +2,7 @@ from faststream import Context
 from faststream.rabbit import RabbitRouter
 
 from ..schemas.message_schemas import SingleEmailNotification
-from ..services.mail_services import EmailService
+from ..services.email_sender_service import EmailService
 from ..services.template_services import get_template
 from ..services.notification_services import send_mail_single
 

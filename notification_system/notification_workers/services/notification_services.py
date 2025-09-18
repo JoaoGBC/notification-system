@@ -1,5 +1,5 @@
 from email.message import EmailMessage
-from .mail_services import EmailService
+from .email_sender_service import EmailService
 
 async def send_mail_single(
         *,
