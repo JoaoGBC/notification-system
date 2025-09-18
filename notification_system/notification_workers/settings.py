@@ -10,6 +10,11 @@ class Settings(BaseSettings):
         alias='SQLALCHEMY_DATABASE_URI_NOTIFICATION_WORKERS'
     )
     BROKER_URL: str = Field(alias='BROKER_URL')
-
+    SMTP_HOST: str
+    SMTP_PORT: int
+    SMTP_USERNAME: str
+    SMTP_PASSWORD: str
+    MAX_SMTP_CONNECTIONS: int
+    TEMPLATE_API_HOST: str
 
 settings = Settings()
